@@ -51,6 +51,55 @@ class Index(generics.ListAPIView):
         )
 
 
+class HostIndex(generics.RetrieveAPIView):
+    """
+    Returns a list of host summaries
+    """
+
+    queryset = models.Host.objects.all()
+    filterset_class = filters.HostFilter
+    renderer_classes = [TemplateHTMLRenderer]
+    pagination_class = LimitOffsetPaginationWithLinks
+    template_name = "host_index.html"
+
+    def get(self, request, *args, **kwargs):
+        # TODO: Can we retrieve those fields automatically ?
+        fields = ["name"]
+        search_query = False
+        for field in fields:
+            if field in request.GET:
+                search_query = True
+
+        if search_query:
+            search_form = forms.HostSearchForm(request.GET)
+        else:
+            search_form = forms.HostSearchForm()
+
+        query = self.filter_queryset(self.queryset.all().order_by("-updated"))
+        page = self.paginate_queryset(query)
+        if page is not None:
+            serializer = serializers.ListHostSerializer(page, many=True)
+        else:
+            serializer = serializers.ListHostSerializer(query, many=True)
+        response = self.get_paginated_response(serializer.data)
+
+        if self.paginator.count > (self.paginator.offset + self.paginator.limit):
+            max_current = self.paginator.offset + self.paginator.limit
+        else:
+            max_current = self.paginator.count
+        current_page_results = "%s-%s" % (self.paginator.offset + 1, max_current)
+
+        return Response(
+            {
+                "page": "host_index",
+                "data": response.data,
+                "search_form": search_form,
+                "search_query": search_query,
+                "current_page_results": current_page_results,
+            }
+        )
+
+
 class Playbook(generics.RetrieveAPIView):
     """
     Returns a page for a detailed view of a playbook

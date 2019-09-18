@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block body %}
+{% if not static_generation %}
+{% load datetime_formatting %}
+
+<div class="pf-l-flex pf-m-space-items-xl">
+    <form novalidate action="/hosts" method="get" class="pf-c-form pf-m-horizontal">
+    <div class="pf-c-form__group pf-m-inline">
+        <div class="pf-l-flex__item pf-m-flex-1">
+            <label class="pf-c-form__label" for="name">
+                <span class="pf-c-form__label-text">Name</span>
+            </label>
+            <div class="pf-c-form__horizontal-group">
+                <input class="pf-c-form-control" type="text" id="name" name="name" value="{% if search_form.name.value is not null %}{{ search_form.name.value }}{% endif %}" />
+            </div>
+        </div>
+        <div class="pf-l-flex__item">
+            <div class="pf-c-form__actions">
+                <button class="pf-c-button pf-m-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+
+{% include "partials/pagination.html" %}
+{% endif %}
+
+<div class="pf-l-flex">
+    <table class="pf-c-table pf-m-grid-md pf-m-compact" role="grid" id="host-table">
+        <thead>
+            <tr role="row">
+                <th role="columnheader" scope="col" class="pf-m-fit-content">Status</th>
+                <th role="columnheader" scope="col" class="pf-m-fit-content">Date</th>
+                <th role="columnheader" scope="col" class="pf-m-fit-content">Host</th>
+                <th role="columnheader" scope="col" class="pf-m-fit-content">
+                    <div class="pf-c-alert pf-m-warning pf-m-inline pf-m-fit-content">
+                        <div class="pf-c-alert__icon" title="Tasks completed with changes">
+                            <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                            <p>&nbsp;CHANGED</p>
+                        </div>
+                    </div>
+                </th>
+                <th role="columnheader" scope="col" class="pf-m-fit-content">
+                    <div class="pf-c-alert pf-m-danger pf-m-inline pf-m-fit-content">
+                        <div class="pf-c-alert__icon" title="Tasks completed with errors">
+                            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                            <p>&nbsp;FAILED</p>
+                        </div>
+                    </div>
+                </th>
+                <th role="columnheader" scope="col" class="pf-m-fit-content">
+                    <div class="pf-c-alert pf-m-success pf-m-inline pf-m-fit-content">
+                        <div class="pf-c-alert__icon" title="Tasks completed successfully">
+                            <i class="fas fa-check-circle" aria-hidden="true"></i>
+                            <p>&nbsp;OK</p>
+                        </div>
+                    </div>
+                </th>
+                <th role="columnheader" scope="col" class="pf-m-fit-content">
+                    <div class="pf-c-alert pf-m-inline pf-m-fit-content">
+                        <div class="pf-c-alert__icon" title="Tasks skipped">
+                            <i class="fas fa-forward" aria-hidden="true"></i>
+                            <p>&nbsp;SKIPPED</p>
+                        </div>
+                    </div>
+                </th>
+                <th role="columnheader" scope="col" class="pf-m-fit-content">
+                    <div class="pf-c-alert pf-m-danger pf-m-inline pf-m-fit-content">
+                        <div class="pf-c-alert__icon" title="Tasks with an unreachable host">
+                            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                            <p>&nbsp;UNREACHABLE</p>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for host in data.results %}
+            <tr>
+                <td role="cell" data-label="Status" class="pf-c-table__icon pf-m-fit-content">
+                    {% include "partials/host_status_icon.html" %}
+                </td>
+                <td role="cell" data-label="Date" class="pf-m-fit-content">
+                    <span title="Date at which the host was last updated">
+                        {{ host.updated | format_date }}
+                    </span>
+                </td>
+                <td role="cell" data-label="Hostname" class="pf-m-fit-content">
+                    <a href="../host/{{ host.id }}.html">{{ host.name }}</a>
+                </td>
+                <td role="cell" data-label="Changed" class="pf-m-fit-content">
+                    {{ host.changed }}
+                </td>
+                <td role="cell" data-label="Failed" class="pf-m-fit-content">
+                    {{ host.failed }}
+                </td>
+                <td role="cell" data-label="Ok" class="pf-m-fit-content">
+                    {{ host.ok }}
+                </td>
+                <td role="cell" data-label="Skipped" class="pf-m-fit-content">
+                    {{ host.skipped }}
+                </td>
+                <td role="cell" data-label="Unreachable" class="pf-m-fit-content">
+                    {{ host.unreachable }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include "partials/pagination.html" %}
+{% endblock %}

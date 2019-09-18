@@ -40,6 +40,13 @@
                             <a href="{% if not static_generation %}{% url 'ui:index' %}{% else %}../{% endif %}" class="pf-c-nav__link">Playbooks</a>
                             {% endif %}
                         </li>
+                        <li class="pf-c-nav__item">
+                            {% if page == "host_index" %}
+                            <a href="/hosts" class="pf-c-nav__link pf-m-current" aria-current="page">Hosts</a>
+                            {% else %}
+                            <a href="../hosts" class="pf-c-nav__link">Hosts</a>
+                            {% endif %}
+                        </li>
                         {% include "partials/api_link.html" %}
                         <li class="pf-c-nav__item">
                             <a href="https://ara.readthedocs.io" class="pf-c-nav__link" target="_blank">Docs</a>

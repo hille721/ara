@@ -1,7 +1,11 @@
 {% load rest_framework %}
 {% if not static_generation %}
 <li class="pf-c-nav__item">
-    {% if playbook.id %}
+    {% if page == "index" %}
+        <a href="{% url 'playbook-list' %}" class="pf-c-nav__link" target="_blank">API</a>
+    {% elif page == "host_index" %}
+        <a href="{% url 'host-list' %}" class="pf-c-nav__link" target="_blank">API</a>
+    {% elif playbook.id %}
         <a href="{% url 'playbook-detail' pk=playbook.id %}" class="pf-c-nav__link" target="_blank">API</a>
     {% elif result.id %}
         <a href="{% url 'result-detail' pk=result.id %}" class="pf-c-nav__link" target="_blank">API</a>

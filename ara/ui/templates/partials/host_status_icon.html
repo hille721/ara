@@ -1,0 +1,29 @@
+{% if host.unreachable >= 1 %}
+<div class="pf-c-alert pf-m-danger pf-m-inline pf-m-fit-content">
+    <div class="pf-c-alert__icon" title="Host was unreachable during the playbook">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        <p>&nbsp;UNREACHABLE</p>
+    </div>
+</div>
+{% elif host.failed >= 1 %}
+<div class="pf-c-alert pf-m-danger pf-m-inline pf-m-fit-content">
+    <div class="pf-c-alert__icon" title="Host had errors during the playbook">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        <p>&nbsp;FAILED</p>
+    </div>
+</div>
+{% elif host.changed >= 1 %}
+<div class="pf-c-alert pf-m-warning pf-m-inline pf-m-fit-content">
+    <div class="pf-c-alert__icon" title="Host was changed during the playbook">
+        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+        <p>&nbsp;CHANGED</p>
+    </div>
+</div>
+{% else %}
+<div class="pf-c-alert pf-m-success pf-m-inline pf-m-fit-content">
+    <div class="pf-c-alert__icon" title="Host completed playbook with no changes or errors">
+        <i class="fas fa-check-circle" aria-hidden="true"></i>
+        <p>&nbsp;OK</p>
+    </div>
+</div>
+{% endif %}
