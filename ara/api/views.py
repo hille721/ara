@@ -91,6 +91,7 @@ class TaskViewSet(viewsets.ModelViewSet):
             return serializers.TaskSerializer
 
 
+
 class HostViewSet(viewsets.ModelViewSet):
     queryset = models.Host.objects.all()
     filterset_class = filters.HostFilter
@@ -103,6 +104,16 @@ class HostViewSet(viewsets.ModelViewSet):
         else:
             # create/update/destroy
             return serializers.HostSerializer
+
+
+class LatestHostViewSet(HostViewSet):
+    queryset = models.Host.objects.all()
+    filterset_class = filters.HostFilter
+
+    def get_queryset(self):
+        latesthosts = [self.queryset.filter(name=host['name']).latest('created').id
+                       for host in self.queryset.order_by('name').values('name').distinct()]
+        return self.queryset.filter(id__in=latesthosts)
 
 
 class ResultViewSet(viewsets.ModelViewSet):
